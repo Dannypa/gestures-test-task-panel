@@ -19,7 +19,7 @@ enum Side {
 
 /**
  * The panel that records when mouse enters and the side it enters from.
- * Draws a meme and makes the meme follow the mouse.
+ * Draws a meme and makes the meme follow the mouse such that mouse is at the center of the meme.
  * Resizes the meme based on the mouse movement: the dimensions are updated by the formula
  * currentD = min(originalD / b + k * distance(mouse, side it entered from), originalD)
  */
@@ -99,6 +99,8 @@ public class MouseMemeResizePanel extends JPanel {
                 int distanceToSide = getDistanceToSide(e.getLocationOnScreen(), entranceSide);
                 currentMemeSize = getCurrentMemeSize(distanceToSide);
                 currentMemePosition = e.getPoint();
+                currentMemePosition.x -= currentMemeSize.width / 2;
+                currentMemePosition.y -= currentMemeSize.height / 2;
                 repaint();
             }
         };

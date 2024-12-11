@@ -1,7 +1,12 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -14,6 +19,7 @@ enum Side {
 
 /**
  * The panel that records when mouse enters and the side it enters from.
+ * Draws a meme if the mouse is inside the panel.
  * Currently prints the distance to the side when mouse moves.
  * TODO: draw a meme inside when mouse enters and resize it when mouse moves
  */
@@ -24,13 +30,46 @@ public class MouseMemeResizePanel extends JPanel {
      */
     private Side entranceSide;
 
-    public MouseMemeResizePanel() {
+    /**
+     * The meme we are going to draw.
+     */
+    private final BufferedImage meme;
+    /**
+     * The original size of the meme.
+     */
+    private final Dimension originalMemeSize;
+    /**
+     * The current size of the meme; depends on the mouse position.
+     */
+    private Dimension currentMemeSize;
+    /**
+     * Determines if the meme is visible; basically checks if the mouse is inside the panel.
+     */
+    private boolean isVisible = false;
+
+    public MouseMemeResizePanel(String pathToMeme) throws IOException {
+        this.setLayout(null);
+
+        meme = ImageIO.read(new File(pathToMeme));
+        originalMemeSize = new Dimension(meme.getWidth(), meme.getHeight());
+        currentMemeSize = new Dimension(meme.getWidth() / 2, meme.getHeight() / 2);
+
         MouseInputAdapter handler = new MouseInputAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
 
                 entranceSide = getClosestSide(e.getLocationOnScreen());
+                isVisible = true;
+                repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+
+                isVisible = false;
+                repaint();
             }
 
             @Override
@@ -38,12 +77,20 @@ public class MouseMemeResizePanel extends JPanel {
                 super.mouseMoved(e);
 
                 assert entranceSide != null;
-                System.out.println(getDistanceToSide(e.getLocationOnScreen(), entranceSide));
+//                System.out.println(getDistanceToSide(e.getLocationOnScreen(), entranceSide));
             }
         };
 
         this.addMouseListener(handler);
         this.addMouseMotionListener(handler);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (isVisible) {
+            g.drawImage(meme, 0, 0, currentMemeSize.width, currentMemeSize.height, this);
+        }
     }
 
     /**
@@ -63,7 +110,7 @@ public class MouseMemeResizePanel extends JPanel {
     }
 
     /**
-     * @param p The point whose coordinate is returned.
+     * @param p    The point whose coordinate is returned.
      * @param side The side that we compute the coordinate for.
      * @return The coordinate relevant for this side.
      * If the side is TOP or BOTTOM, returns its y; otherwise returns its x.
@@ -96,7 +143,7 @@ public class MouseMemeResizePanel extends JPanel {
     }
 
     /**
-     * @param p The point which we compute the distance from.
+     * @param p    The point which we compute the distance from.
      * @param side Determines the side we compute the distance to.
      * @return The distance from the point to the panel's side.
      */

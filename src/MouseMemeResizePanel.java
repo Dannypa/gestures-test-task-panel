@@ -19,8 +19,7 @@ enum Side {
 
 /**
  * The panel that records when mouse enters and the side it enters from.
- * Draws a meme if the mouse is inside the panel.
- * Currently prints the distance to the side when mouse moves.
+ * Draws a meme and makes the meme follow the mouse.
  * Resizes the meme based on the mouse movement: the dimensions are updated by the formula
  * currentD = min(originalD / b + k * distance(mouse, side it entered from), originalD)
  */
@@ -54,6 +53,10 @@ public class MouseMemeResizePanel extends JPanel {
      * The current size of the meme; depends on the mouse position.
      */
     private Dimension currentMemeSize;
+    /**
+     * The position the meme should be drawn at. Follows the mouse position.
+     */
+    private Point currentMemePosition;
     /**
      * Determines if the meme is visible; basically checks if the mouse is inside the panel.
      */
@@ -95,8 +98,7 @@ public class MouseMemeResizePanel extends JPanel {
 
                 int distanceToSide = getDistanceToSide(e.getLocationOnScreen(), entranceSide);
                 currentMemeSize = getCurrentMemeSize(distanceToSide);
-                System.out.println(distanceToSide);
-                System.out.println(currentMemeSize);
+                currentMemePosition = e.getPoint();
                 repaint();
             }
         };
@@ -107,7 +109,8 @@ public class MouseMemeResizePanel extends JPanel {
 
     /**
      * Applies the scaling formula to a number (meme dimension).
-     * @param original Original dimension.
+     *
+     * @param original       Original dimension.
      * @param distanceToSide Current distance from mouse to the side of the panel it entered from.
      * @return The result of the scaling of the original dimension given by the formula in the class description.
      */
@@ -120,6 +123,7 @@ public class MouseMemeResizePanel extends JPanel {
 
     /**
      * Applies the scaling formula to get the current meme size.
+     *
      * @param distanceToSide Current distance from mouse to the side of the panel it entered from.
      * @return The result of scaling of the meme size given by the formula in the class description.
      */
@@ -132,14 +136,23 @@ public class MouseMemeResizePanel extends JPanel {
 
     /**
      * Paints this component; specifically, paints the meme.
+     *
      * @param g Graphics parameter.
      */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         assert currentMemeSize != null;
+        assert currentMemePosition != null;
         if (isVisible) {
-            g.drawImage(meme, 0, 0, currentMemeSize.width, currentMemeSize.height, this);
+            g.drawImage(
+                    meme,
+                    currentMemePosition.x,
+                    currentMemePosition.y,
+                    currentMemeSize.width,
+                    currentMemeSize.height,
+                    this
+            );
         }
     }
 

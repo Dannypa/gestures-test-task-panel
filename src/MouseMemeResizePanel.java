@@ -1,6 +1,5 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -35,7 +34,6 @@ public class MouseMemeResizePanel extends JPanel {
      */
     private final double SCALING_FACTOR = 0.001;
 
-
     /**
      * The side from which the mouse entered last time.
      */
@@ -62,10 +60,10 @@ public class MouseMemeResizePanel extends JPanel {
      */
     private boolean isVisible = false;
 
-    public MouseMemeResizePanel(String pathToMeme) throws IOException {
+    public MouseMemeResizePanel(BufferedImage meme) throws IOException {
         this.setLayout(null);
 
-        meme = ImageIO.read(new File(pathToMeme));
+        this.meme = meme;
         originalMemeSize = new Dimension(meme.getWidth(), meme.getHeight());
 
         MouseInputAdapter handler = new MouseInputAdapter() {

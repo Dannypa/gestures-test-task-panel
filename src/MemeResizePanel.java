@@ -140,8 +140,10 @@ public class MemeResizePanel extends JPanel {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        assert currentMemeSize != null;
-        assert currentMemePosition != null;
+        if (currentMemePosition == null || currentMemeSize == null) {
+            System.out.println("nulls!");
+            return;
+        }
         if (isVisible) {
             g.drawImage(
                     meme,

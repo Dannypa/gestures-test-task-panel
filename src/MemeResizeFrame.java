@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Frame that handles the MouseResize panel.
+ */
 public class MemeResizeFrame extends JFrame {
     MemeResizeFrame(BufferedImage meme) {
         MemeResizePanel panel = new MemeResizePanel(meme);

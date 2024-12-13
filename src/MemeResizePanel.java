@@ -1,10 +1,8 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,7 +20,7 @@ enum Side {
  * Resizes the meme based on the mouse movement: the dimensions are updated by the formula
  * currentD = min(originalD / b + k * distance(mouse, side it entered from), originalD)
  */
-public class MouseMemeResizePanel extends JPanel {
+public class MemeResizePanel extends JPanel {
 
     /**
      * Initial scaling factor b from the formula above.
@@ -60,7 +58,7 @@ public class MouseMemeResizePanel extends JPanel {
      */
     private boolean isVisible = false;
 
-    public MouseMemeResizePanel(BufferedImage meme) throws IOException {
+    public MemeResizePanel(BufferedImage meme) {
         this.setLayout(null);
 
         this.meme = meme;

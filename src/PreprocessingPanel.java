@@ -12,25 +12,39 @@ import java.beans.PropertyChangeListener;
  * as it seems that implementing the size change for it would require listening to resize events.
  */
 public class PreprocessingPanel extends JPanel implements PropertyChangeListener {
-    /** Modulo value for computations to prevent overflow. */
+    /**
+     * Modulo value for computations to prevent overflow.
+     */
     private final int MOD = 1_000_000_007;
 
-    /** The result of the preprocessing task. */
+    /**
+     * The result of the preprocessing task.
+     */
     private int result;
 
-    /** Background task that performs the computation. */
+    /**
+     * Background task that performs the computation.
+     */
     private Task task;
 
-    /** Panel to display the progress bar. */
+    /**
+     * Panel to display the progress bar.
+     */
     private final JPanel progressBarPanel = new JPanel();
 
-    /** Progress bar that shows computation progress. */
+    /**
+     * Progress bar that shows computation progress.
+     */
     private final JProgressBar progressBar = new JProgressBar();
 
-    /** Panel to display the final result. */
+    /**
+     * Panel to display the final result.
+     */
     private final JPanel resultPanel = new JPanel();
 
-    /** Label to display the result text. */
+    /**
+     * Label to display the result text.
+     */
     private final JLabel resultLabel = new JLabel();
 
     /**
@@ -51,6 +65,7 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
      */
     class Task extends SwingWorker<Void, Void> {
         private final int POWER = 1_000_000_000;
+
         /**
          * Main task. Executed in background thread.
          */
@@ -122,9 +137,9 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     /**
      * Adds a row of components to a panel with specified constraints.
      *
-     * @param panel      The target panel.
-     * @param rowIndex   The row index to add components.
-     * @param components Array of components to add.
+     * @param panel       The target panel.
+     * @param rowIndex    The row index to add components.
+     * @param components  Array of components to add.
      * @param constraints Array of GridBagConstraints for each component.
      */
     private void addRow(JPanel panel, int rowIndex, Component[] components, GridBagConstraints[] constraints) {
@@ -139,9 +154,9 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     /**
      * Centers a component within a panel using GridBagLayout.
      *
-     * @param panel            The target panel.
-     * @param component        The component to center.
-     * @param verticalWeights  Weights for vertical layout.
+     * @param panel             The target panel.
+     * @param component         The component to center.
+     * @param verticalWeights   Weights for vertical layout.
      * @param horizontalWeights Weights for horizontal layout.
      */
     private void centerComponent(JPanel panel, Component component, int[] verticalWeights, int[] horizontalWeights) {
@@ -194,9 +209,9 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     /**
      * Sets up a panel and centers a given component in it using specified layout weights.
      *
-     * @param panel            The target panel.
-     * @param component        The component to center.
-     * @param verticalWeights  Weights for vertical layout.
+     * @param panel             The target panel.
+     * @param component         The component to center.
+     * @param verticalWeights   Weights for vertical layout.
      * @param horizontalWeights Weights for horizontal layout.
      */
     private void setUpPanel(JPanel panel, Component component, int[] verticalWeights, int[] horizontalWeights) {
@@ -210,6 +225,7 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     PreprocessingPanel() {
         startPreprocessing();
         this.setLayout(new BorderLayout());
+        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
 
         setUpProgressBar();
         setUpPanel(progressBarPanel, progressBar, new int[]{3, 1, 3}, new int[]{1, 4, 1});

@@ -8,7 +8,7 @@ public class Main {
         try {
             BufferedImage meme = ImageIO.read(new File("resources/meme.png"));
 
-            new MemeResizeFrame(meme);
+            new MouseFollowResizeFrame(meme);
         } catch (IOException e) {
             System.out.println("Can't open the meme: " + e.getMessage());
         }

@@ -9,7 +9,7 @@ public class MouseFollowResizeFrame extends JFrame {
     final int SCREEN_WIDTH = 1000;
     final int SCREEN_HEIGHT = 1000;
 
-    MouseFollowResizeFrame(BufferedImage meme) {
+    MouseFollowResizeFrame() {
         JPanel innerPanel = new PreprocessingPanel();
 
         MouseFollowResizePanel panel = new MouseFollowResizePanel(

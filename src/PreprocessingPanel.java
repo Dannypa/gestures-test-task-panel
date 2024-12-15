@@ -4,12 +4,13 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class PreprocessingPanel extends JPanel implements PropertyChangeListener {
-    private int result = 0;
+    private final int MOD = 1_000_000_007;
+    private int result;
     private Task task;
-    final private JPanel progressBarPanel = new JPanel();
-    final private JProgressBar progressBar = new JProgressBar();
-    final private JPanel resultPanel = new JPanel();
-    final private JLabel resultLabel = new JLabel("Loaded!");
+    private final JPanel progressBarPanel = new JPanel();
+    private final JProgressBar progressBar = new JProgressBar();
+    private final JPanel resultPanel = new JPanel();
+    private final JLabel resultLabel = new JLabel();
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -19,18 +20,19 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     }
 
     class Task extends SwingWorker<Void, Void> {
-        private final int MAX_PROGRESS = 1_000_000_000;
-        private final int percent = MAX_PROGRESS / 100;
+        private final int POWER = 1_000_000_000;
+        private final int percent = POWER / 100;
 
         /*
          * Main task. Executed in background thread.
          */
         @Override
         public Void doInBackground() {
+            System.out.println("started background");
             result = 1;
             setProgress(0);
-            for (int progress = 0; progress <= MAX_PROGRESS; progress++) {
-                result *= 2; // I don't care about overflow
+            for (int progress = 0; progress <= POWER; progress++) {
+                result = (result * 2) % MOD; // Never mind, java overflow is goofy like that
                 if ((progress % percent) == 0) {
                     setProgress(progress / percent);
                 }
@@ -43,10 +45,13 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
          */
         @Override
         public void done() {
-            Toolkit.getDefaultToolkit().beep();
             progressBarPanel.setVisible(false);
+
+            setUpResultLabel();
+            setUpPanel(resultPanel, resultLabel, new int[]{3, 1, 3}, new int[]{1, 4, 1});
             resultPanel.setVisible(true);
             add(resultPanel);
+
         }
     }
 
@@ -112,6 +117,7 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     }
 
     private void setUpResultLabel() {
+        resultLabel.setText("Loaded! " + result);
         resultLabel.setHorizontalAlignment(JLabel.CENTER);
         resultLabel.setVerticalAlignment(JLabel.CENTER);
         resultLabel.setFont(new Font("Sans Serif", Font.PLAIN, 60));
@@ -129,8 +135,6 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
 
         setUpProgressBar();
         setUpPanel(progressBarPanel, progressBar, new int[]{3, 1, 3}, new int[]{1, 4, 1});
-        setUpResultLabel();
-        setUpPanel(resultPanel, resultLabel, new int[]{3, 1, 3}, new int[]{1, 4, 1});
         progressBarPanel.setVisible(true);
 
         this.add(progressBarPanel);

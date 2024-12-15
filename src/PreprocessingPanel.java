@@ -8,6 +8,8 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     private Task task;
     final private JPanel progressBarPanel = new JPanel();
     final private JProgressBar progressBar = new JProgressBar();
+    final private JPanel resultPanel = new JPanel();
+    final private JLabel resultLabel = new JLabel("Loaded!");
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -19,6 +21,7 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     class Task extends SwingWorker<Void, Void> {
         private final int MAX_PROGRESS = 1_000_000_000;
         private final int percent = MAX_PROGRESS / 100;
+
         /*
          * Main task. Executed in background thread.
          */
@@ -41,6 +44,9 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
         @Override
         public void done() {
             Toolkit.getDefaultToolkit().beep();
+            progressBarPanel.setVisible(false);
+            resultPanel.setVisible(true);
+            add(resultPanel);
         }
     }
 
@@ -71,47 +77,62 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
         }
     }
 
+    private void centerComponent(JPanel panel, Component component, int[] verticalWeights, int[] horizontalWeights) {
+        addRow(
+                panel,
+                0,
+                new Component[]{Box.createVerticalGlue()},
+                new GridBagConstraints[]{getGBC(1, verticalWeights[0], GridBagConstraints.NONE)}
+        );
+
+        GridBagConstraints[] middleRowConstraints = new GridBagConstraints[3];
+        for (int i = 0; i < 3; i++) {
+            middleRowConstraints[i] = getGBC(horizontalWeights[i], 1, GridBagConstraints.NONE);
+        }
+        middleRowConstraints[1].fill = GridBagConstraints.BOTH;
+        addRow(
+                panel,
+                1,
+                new Component[]{Box.createHorizontalGlue(), component, Box.createHorizontalGlue()},
+                middleRowConstraints
+        );
+
+        addRow(
+                panel,
+                2,
+                new Component[]{Box.createVerticalGlue()},
+                new GridBagConstraints[]{getGBC(1, verticalWeights[2], GridBagConstraints.NONE)}
+        );
+    }
+
 
     private void setUpProgressBar() {
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
     }
 
-    private void setUpProgressBarPanel() {
-        setUpProgressBar();
+    private void setUpResultLabel() {
+        resultLabel.setHorizontalAlignment(JLabel.CENTER);
+        resultLabel.setVerticalAlignment(JLabel.CENTER);
+        resultLabel.setFont(new Font("Sans Serif", Font.PLAIN, 60));
+    }
 
-        progressBarPanel.setLayout(new GridBagLayout());
 
-        addRow(
-                progressBarPanel,
-                0,
-                new Component[]{Box.createVerticalGlue()},
-                new GridBagConstraints[]{getGBC(1, 3, GridBagConstraints.NONE)}
-        );
-
-        addRow(
-                progressBarPanel,
-                1,
-                new Component[]{Box.createHorizontalGlue(), progressBar, Box.createHorizontalGlue()},
-                new GridBagConstraints[]{
-                        getGBC(1, 1, GridBagConstraints.NONE),
-                        getGBC(4, 1, GridBagConstraints.BOTH),
-                        getGBC(1, 1, GridBagConstraints.NONE)
-                }
-        );
-
-        addRow(
-                progressBarPanel,
-                2,
-                new Component[]{Box.createVerticalGlue()},
-                new GridBagConstraints[]{getGBC(1, 3, GridBagConstraints.NONE)}
-        );
+    private void setUpPanel(JPanel panel, Component component, int[] verticalWeights, int[] horizontalWeights) {
+        panel.setLayout(new GridBagLayout());
+        centerComponent(panel, component, verticalWeights, horizontalWeights);
     }
 
     PreprocessingPanel() {
         startPreprocessing();
         this.setLayout(new BorderLayout());
-        setUpProgressBarPanel();
+
+        setUpProgressBar();
+        setUpPanel(progressBarPanel, progressBar, new int[]{3, 1, 3}, new int[]{1, 4, 1});
+        setUpResultLabel();
+        setUpPanel(resultPanel, resultLabel, new int[]{3, 1, 3}, new int[]{1, 4, 1});
+        progressBarPanel.setVisible(true);
+
         this.add(progressBarPanel);
     }
 

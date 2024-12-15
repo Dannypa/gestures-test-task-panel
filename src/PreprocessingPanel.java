@@ -56,11 +56,11 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
         task.execute();
     }
 
-    private GridBagConstraints getGBC(int weightX, int weightY, int fill) {
+    private GridBagConstraints getNoneFillGBC(int weightX, int weightY) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.weightx = weightX;
         gbc.weighty = weightY;
-        gbc.fill = fill;
+        gbc.fill = GridBagConstraints.NONE;
         return gbc;
     }
 
@@ -82,12 +82,12 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
                 panel,
                 0,
                 new Component[]{Box.createVerticalGlue()},
-                new GridBagConstraints[]{getGBC(1, verticalWeights[0], GridBagConstraints.NONE)}
+                new GridBagConstraints[]{getNoneFillGBC(1, verticalWeights[0])}
         );
 
         GridBagConstraints[] middleRowConstraints = new GridBagConstraints[3];
         for (int i = 0; i < 3; i++) {
-            middleRowConstraints[i] = getGBC(horizontalWeights[i], 1, GridBagConstraints.NONE);
+            middleRowConstraints[i] = getNoneFillGBC(horizontalWeights[i], 1);
         }
         middleRowConstraints[1].fill = GridBagConstraints.BOTH;
         addRow(
@@ -101,7 +101,7 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
                 panel,
                 2,
                 new Component[]{Box.createVerticalGlue()},
-                new GridBagConstraints[]{getGBC(1, verticalWeights[2], GridBagConstraints.NONE)}
+                new GridBagConstraints[]{getNoneFillGBC(1, verticalWeights[2])}
         );
     }
 

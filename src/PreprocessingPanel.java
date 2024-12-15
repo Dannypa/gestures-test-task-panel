@@ -3,10 +3,11 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class LoadingBarPanel extends JPanel implements PropertyChangeListener {
+public class PreprocessingPanel extends JPanel implements PropertyChangeListener {
     private int result = 0;
     private Task task;
-    final private JProgressBar progressBar;
+    final private JPanel progressBarPanel = new JPanel();
+    final private JProgressBar progressBar = new JProgressBar();
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
@@ -57,35 +58,39 @@ public class LoadingBarPanel extends JPanel implements PropertyChangeListener {
         return gbc;
     }
 
-    private void addComponent(Component c, GridBagConstraints gbc) {
-        this.add(c, gbc);
+    private void addComponent(JPanel panel, Component c, GridBagConstraints gbc) {
+        panel.add(c, gbc);
     }
 
-    private void addRow(int rowIndex, Component[] components, GridBagConstraints[] constraints) {
+    private void addRow(JPanel panel, int rowIndex, Component[] components, GridBagConstraints[] constraints) {
         assert components.length == constraints.length;
         for (int i = 0; i < components.length; i++) {
             constraints[i].gridx = i;
             constraints[i].gridy = rowIndex;
-            addComponent(components[i], constraints[i]);
+            addComponent(panel, components[i], constraints[i]);
         }
     }
 
-    LoadingBarPanel() {
-        startPreprocessing();
-        setLayout(new GridBagLayout());
-        this.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        progressBar = new JProgressBar();
+    private void setUpProgressBar() {
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
+    }
+
+    private void setUpProgressBarPanel() {
+        setUpProgressBar();
+
+        progressBarPanel.setLayout(new GridBagLayout());
 
         addRow(
+                progressBarPanel,
                 0,
                 new Component[]{Box.createVerticalGlue()},
                 new GridBagConstraints[]{getGBC(1, 3, GridBagConstraints.NONE)}
         );
 
         addRow(
+                progressBarPanel,
                 1,
                 new Component[]{Box.createHorizontalGlue(), progressBar, Box.createHorizontalGlue()},
                 new GridBagConstraints[]{
@@ -96,15 +101,23 @@ public class LoadingBarPanel extends JPanel implements PropertyChangeListener {
         );
 
         addRow(
+                progressBarPanel,
                 2,
                 new Component[]{Box.createVerticalGlue()},
                 new GridBagConstraints[]{getGBC(1, 3, GridBagConstraints.NONE)}
         );
     }
 
+    PreprocessingPanel() {
+        startPreprocessing();
+        this.setLayout(new BorderLayout());
+        setUpProgressBarPanel();
+        this.add(progressBarPanel);
+    }
+
     // todo: delete
     public static void main(String[] args) {
-        LoadingBarPanel demo = new LoadingBarPanel();
+        PreprocessingPanel demo = new PreprocessingPanel();
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);

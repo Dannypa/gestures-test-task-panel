@@ -84,25 +84,33 @@ public class MouseFollowAndResizePanel extends JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 super.mouseMoved(e);
-
                 assert entranceSide != null;
 
                 int distanceToSide = getDistanceToSide(e.getLocationOnScreen(), entranceSide);
                 component.setSize(calculateCurrentComponentSize(distanceToSide));
-                Point currentMousePosition = e.getPoint();
-                currentMousePosition.x -= component.getSize().width / 2;
-                currentMousePosition.y -= component.getSize().height / 2;
-                component.setLocation(currentMousePosition);
+                centerComponentAtMouse(component, e.getPoint());
                 component.revalidate();
             }
         };
     }
 
     /**
+     * Centers the component relative to the mouse location.
+     *
+     * @param component     The component to be centered.
+     * @param mousePosition The current mouse position.
+     */
+    private void centerComponentAtMouse(Component component, Point mousePosition) {
+        mousePosition.x -= component.getSize().width / 2;
+        mousePosition.y -= component.getSize().height / 2;
+        component.setLocation(mousePosition);
+    }
+
+    /**
      * Constructs a {@link MouseFollowAndResizePanel} that tracks mouse movement, entrance, and resizing.
      *
-     * @param component      The component to be resized and moved based on mouse interaction.
-     * @param componentSize  The original size of the component before any scaling.
+     * @param component     The component to be resized and moved based on mouse interaction.
+     * @param componentSize The original size of the component before any scaling.
      */
     public MouseFollowAndResizePanel(Component component, Dimension componentSize) {
         this.setLayout(null);

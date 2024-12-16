@@ -14,11 +14,11 @@ enum Side {
 
 /**
  * The panel that records when mouse enters and the side it enters from.
- * Draws the passed panel and makes it follow the mouse such that mouse is at the center of the panel.
- * Resizes the panel based on the mouse movement: the dimensions are updated by the formula
+ * Draws the passed component and makes it follow the mouse such that mouse is at the center of the component.
+ * Resizes the component based on the mouse movement: the dimensions are updated by the formula
  * currentD = min(originalD / b + k * distance(mouse, side it entered from), originalD)
  */
-public class MouseFollowResizePanel extends JPanel {
+public class MouseFollowAndResizePanel extends JPanel {
 
     /**
      * Initial scaling factor b from the formula above.
@@ -36,15 +36,15 @@ public class MouseFollowResizePanel extends JPanel {
     private Side entranceSide;
 
     /**
-     * The original size of the panel.
+     * The original size of the component.
      */
-    private final Dimension originalPanelSize;
+    private final Dimension originalSize;
 
-    public MouseFollowResizePanel(JPanel panel, Dimension panelSize) {
+    public MouseFollowAndResizePanel(Component component, Dimension componentSize) {
         this.setLayout(null);
+        this.add(component);
 
-        add(panel);
-        originalPanelSize = panelSize;
+        originalSize = componentSize;
 
         MouseInputAdapter handler = new MouseInputAdapter() {
             @Override
@@ -52,10 +52,10 @@ public class MouseFollowResizePanel extends JPanel {
                 super.mouseEntered(e);
 
                 entranceSide = getClosestSide(e.getLocationOnScreen());
-                panel.setVisible(true);
-                panel.setSize(new Dimension(
-                        originalPanelSize.width / INITIAL_SCALE,
-                        originalPanelSize.height / INITIAL_SCALE
+                component.setVisible(true);
+                component.setSize(new Dimension(
+                        originalSize.width / INITIAL_SCALE,
+                        originalSize.height / INITIAL_SCALE
                 ));
             }
 
@@ -63,7 +63,7 @@ public class MouseFollowResizePanel extends JPanel {
             public void mouseExited(MouseEvent e) {
                 super.mouseExited(e);
 
-                panel.setVisible(false);
+                component.setVisible(false);
             }
 
             @Override
@@ -73,12 +73,12 @@ public class MouseFollowResizePanel extends JPanel {
                 assert entranceSide != null;
 
                 int distanceToSide = getDistanceToSide(e.getLocationOnScreen(), entranceSide);
-                panel.setSize(getCurrentPanelSize(distanceToSide));
+                component.setSize(calculateCurrentComponentSize(distanceToSide));
                 Point currentMousePosition = e.getPoint();
-                currentMousePosition.x -= panel.getSize().width / 2;
-                currentMousePosition.y -= panel.getSize().height / 2;
-                panel.setLocation(currentMousePosition);
-                panel.revalidate();
+                currentMousePosition.x -= component.getSize().width / 2;
+                currentMousePosition.y -= component.getSize().height / 2;
+                component.setLocation(currentMousePosition);
+                component.revalidate();
             }
         };
 
@@ -87,13 +87,13 @@ public class MouseFollowResizePanel extends JPanel {
     }
 
     /**
-     * Applies the scaling formula to a number (panel dimension).
+     * Applies the scaling formula to a number (component dimension).
      *
      * @param original       Original dimension.
      * @param distanceToSide Current distance from mouse to the side of the panel it entered from.
      * @return The result of the scaling of the original dimension given by the formula in the class description.
      */
-    private int getCurrentPanelDimension(int original, int distanceToSide) {
+    private int calculateCurrentComponentDimension(int original, int distanceToSide) {
         return Math.min(
                 original / INITIAL_SCALE + (int) ((distanceToSide * SCALING_FACTOR) * original),
                 original
@@ -101,15 +101,15 @@ public class MouseFollowResizePanel extends JPanel {
     }
 
     /**
-     * Applies the scaling formula to get the current panel size.
+     * Applies the scaling formula to get the current component size.
      *
      * @param distanceToSide Current distance from mouse to the side of the panel it entered from.
-     * @return The result of scaling of the panel size given by the formula in the class description.
+     * @return The result of scaling of the component size given by the formula in the class description.
      */
-    private Dimension getCurrentPanelSize(int distanceToSide) {
+    private Dimension calculateCurrentComponentSize(int distanceToSide) {
         return new Dimension(
-                getCurrentPanelDimension(originalPanelSize.width, distanceToSide),
-                getCurrentPanelDimension(originalPanelSize.height, distanceToSide)
+                calculateCurrentComponentDimension(originalSize.width, distanceToSide),
+                calculateCurrentComponentDimension(originalSize.height, distanceToSide)
         );
     }
 

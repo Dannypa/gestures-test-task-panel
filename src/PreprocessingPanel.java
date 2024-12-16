@@ -112,8 +112,8 @@ public class PreprocessingPanel extends JPanel implements PropertyChangeListener
     /**
      * Creates a GridBagConstraints object for components based on weightx and weighty.
      *
-     * @param weightX Horizontal weight of the component; see <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/GridBagConstraints.html#weightx">weightx</a>.
-     * @param weightY Vertical weight of the component; see <a href="https://docs.oracle.com/javase/8/docs/api/java/awt/GridBagConstraints.html#weighty">weighty</a>.
+     * @param weightX Horizontal weight of the component; see {@link GridBagConstraints#weightx}.
+     * @param weightY Vertical weight of the component; see {@link GridBagConstraints#weighty}.
      * @return A configured GridBagConstraints object.
      */
     private GridBagConstraints getNoneFillGBC(int weightX, int weightY) {

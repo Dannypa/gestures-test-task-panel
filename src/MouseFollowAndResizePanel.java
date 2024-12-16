@@ -16,7 +16,14 @@ enum Side {
  * The panel that records when mouse enters and the side it enters from.
  * Draws the passed component and makes it follow the mouse such that mouse is at the center of the component.
  * Resizes the component based on the mouse movement: the dimensions are updated by the formula
- * currentD = min(originalD / b + k * distance(mouse, side it entered from), originalD)
+ * currentD = min(originalD / b + k * distance(mouse, entranceSide), originalD)
+ * where:
+ * <ul>
+ *     <li>originalD - the original dimension of the component</li>
+ *     <li>b - the initial scaling factor</li>
+ *     <li>k - a scaling factor to adjust sensitivity</li>
+ *     <li>distance(mouse, entranceSide) - the distance from the mouse to the side of the panel it entered from</li>
+ * </ul>
  */
 public class MouseFollowAndResizePanel extends JPanel {
 
@@ -40,13 +47,21 @@ public class MouseFollowAndResizePanel extends JPanel {
      */
     private final Dimension originalSize;
 
-    public MouseFollowAndResizePanel(Component component, Dimension componentSize) {
-        this.setLayout(null);
-        this.add(component);
-
-        originalSize = componentSize;
-
-        MouseInputAdapter handler = new MouseInputAdapter() {
+    /**
+     * Generates a mouse input adapter that handles mouse events such as entering, exiting, and movement.
+     * <p>
+     * The adapter:
+     * <ul>
+     *     <li>Tracks the side where the mouse enters.</li>
+     *     <li>Updates the component size and visibility.</li>
+     *     <li>Centers the component on the mouse location.</li>
+     * </ul>
+     *
+     * @param component The component to be resized and moved.
+     * @return A {@link MouseInputAdapter} to handle mouse events.
+     */
+    private MouseInputAdapter getMouseInputAdapter(Component component) {
+        return new MouseInputAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 super.mouseEntered(e);
@@ -81,7 +96,19 @@ public class MouseFollowAndResizePanel extends JPanel {
                 component.revalidate();
             }
         };
+    }
 
+    /**
+     * Constructs a {@link MouseFollowAndResizePanel} that tracks mouse movement, entrance, and resizing.
+     *
+     * @param component      The component to be resized and moved based on mouse interaction.
+     * @param componentSize  The original size of the component before any scaling.
+     */
+    public MouseFollowAndResizePanel(Component component, Dimension componentSize) {
+        this.setLayout(null);
+        this.add(component);
+        originalSize = componentSize;
+        MouseInputAdapter handler = getMouseInputAdapter(component);
         this.addMouseListener(handler);
         this.addMouseMotionListener(handler);
     }
@@ -114,7 +141,9 @@ public class MouseFollowAndResizePanel extends JPanel {
     }
 
     /**
-     * @param side Determines which side is considered.
+     * Retrieves the coordinate of the specified side of the panel.
+     *
+     * @param side The {@link Side} for which the coordinate is required.
      * @return The relevant coordinate of the panel's side.
      * If the side is TOP or BOTTOM, returns its y; otherwise returns its x.
      */
@@ -145,7 +174,7 @@ public class MouseFollowAndResizePanel extends JPanel {
 
     /**
      * @param p The point which we compute the distance from.
-     * @return The side that is closest to the point.
+     * @return The {@link Side} closest to the specified point.
      */
     private Side getClosestSide(Point p) {
         // not always clear: what if it is diagonal?
@@ -164,7 +193,7 @@ public class MouseFollowAndResizePanel extends JPanel {
 
     /**
      * @param p    The point which we compute the distance from.
-     * @param side Determines the side we compute the distance to.
+     * @param side The {@link Side} to calculate the distance to.
      * @return The distance from the point to the panel's side.
      */
     private int getDistanceToSide(Point p, Side side) {

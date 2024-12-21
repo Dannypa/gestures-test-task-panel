@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class Main {
     public static void panelExample() {
-        JPanel panel = new PreprocessingPanel();
+        JPanel panel = new GridBagPreprocessingPanel();
         new MouseFollowAndResizeFrame(
                 panel,
                 new Dimension(

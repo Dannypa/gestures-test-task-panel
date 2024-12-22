@@ -89,27 +89,9 @@ public class PreprocessingBackend implements PropertyChangeListener {
         public void done() {
             disableProgressBarPanel.run();
 
-            setUpResultLabel();
+            resultLabel.setText("Loaded! " + result); // is it ugly? probably not
             setUpResultPanel.run();
         }
-    }
-
-    /**
-     * Configures the progress bar UI.
-     */
-    private void setUpProgressBar() {
-        progressBar.setValue(0);
-        progressBar.setStringPainted(true);
-    }
-
-    /**
-     * Configures the result label UI to display the computation result.
-     */
-    private void setUpResultLabel() {
-        resultLabel.setText("Loaded! " + result);
-        resultLabel.setHorizontalAlignment(JLabel.CENTER);
-        resultLabel.setVerticalAlignment(JLabel.CENTER);
-        resultLabel.setFont(new Font("Sans Serif", Font.PLAIN, 60));
     }
 
     /**
@@ -138,7 +120,7 @@ public class PreprocessingBackend implements PropertyChangeListener {
         this.setUpResultPanel = showResultPanel;
         this.disableProgressBarPanel = disableProgressBarPanel;
 
-        setUpProgressBar();
+        progressBar.setValue(0);
         showProgressBarPanel.run();
     }
 }

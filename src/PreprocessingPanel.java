@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class GridBagPreprocessingPanel extends JPanel {
+public class PreprocessingPanel extends JPanel {
     /**
      * Panel to display the progress bar.
      */
@@ -105,6 +105,22 @@ public class GridBagPreprocessingPanel extends JPanel {
         );
     }
 
+    /**
+     * Configures the progress bar UI.
+     */
+    private void setUpProgressBarUI() {
+        progressBar.setStringPainted(true);
+    }
+
+    /**
+     * Configures the result label UI to display the computation result.
+     */
+    private void setUpResultLabelUI() {
+        resultLabel.setHorizontalAlignment(JLabel.CENTER);
+        resultLabel.setVerticalAlignment(JLabel.CENTER);
+        resultLabel.setFont(new Font("Sans Serif", Font.PLAIN, 60));
+    }
+
 
     /**
      * Sets up a panel and centers a given component in it using specified layout weights.
@@ -124,13 +140,14 @@ public class GridBagPreprocessingPanel extends JPanel {
     /**
      * Creates the panel. Configures the UI using the GridBagLayout and starts the preprocessing.
      */
-    GridBagPreprocessingPanel() {
+    PreprocessingPanel() {
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
 
         PreprocessingBackend preprocessing = new PreprocessingBackend(
                 progressBar,
                 () -> {
+                    setUpProgressBarUI();
                     setUpPanel(progressBarPanel, progressBar, new int[]{3, 1, 3}, new int[]{1, 4, 1});
                     this.add(progressBarPanel);
                 },
@@ -140,6 +157,7 @@ public class GridBagPreprocessingPanel extends JPanel {
                 },
                 resultLabel,
                 () -> {
+                    setUpResultLabelUI();
                     setUpPanel(resultPanel, resultLabel, new int[]{3, 1, 3}, new int[]{1, 4, 1});
                     this.add(resultPanel);
                 }
@@ -149,7 +167,7 @@ public class GridBagPreprocessingPanel extends JPanel {
     }
 
     public static void main(String[] args) {
-        GridBagPreprocessingPanel demo = new GridBagPreprocessingPanel();
+        PreprocessingPanel demo = new PreprocessingPanel();
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);

@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PreprocessingPanel extends JPanel {
+    private static final Font PROGRESS_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 40);
+    private static final Font RESULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 60);
+
     /**
      * Panel to display the progress bar.
      */
@@ -110,6 +113,7 @@ public class PreprocessingPanel extends JPanel {
      */
     private void setUpProgressBarUI() {
         progressBar.setStringPainted(true);
+        progressBar.setFont(PROGRESS_FONT);
     }
 
     /**
@@ -118,7 +122,7 @@ public class PreprocessingPanel extends JPanel {
     private void setUpResultLabelUI() {
         resultLabel.setHorizontalAlignment(JLabel.CENTER);
         resultLabel.setVerticalAlignment(JLabel.CENTER);
-        resultLabel.setFont(new Font("Sans Serif", Font.PLAIN, 60));
+        resultLabel.setFont(RESULT_FONT);
     }
 
 

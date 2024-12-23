@@ -144,11 +144,11 @@ public class PreprocessingPanel extends JPanel {
     /**
      * Creates the panel. Configures the UI using the GridBagLayout and starts the preprocessing.
      */
-    PreprocessingPanel() {
+    PreprocessingPanel(SwingWorker<Void, Void> task) {
         this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5));
 
-        PreprocessingBackend preprocessing = new PreprocessingBackend(
+        PreprocessingManager preprocessing = new PreprocessingManager(
                 progressBar,
                 () -> {
                     setUpProgressBarUI();
@@ -164,19 +164,10 @@ public class PreprocessingPanel extends JPanel {
                     setUpResultLabelUI();
                     setUpPanel(resultPanel, resultLabel, new int[]{3, 1, 3}, new int[]{1, 4, 1});
                     this.add(resultPanel);
-                }
+                },
+                task
         );
 
         preprocessing.startPreprocessing();
-    }
-
-    public static void main(String[] args) {
-        PreprocessingPanel demo = new PreprocessingPanel();
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.add(demo);
-        frame.setSize(1000, 1000);
-        frame.setVisible(true);
     }
 }

@@ -7,7 +7,26 @@ import java.io.IOException;
 
 public class Main {
     public static void panelExample() {
-        JPanel panel = new PreprocessingPanel();
+        JPanel panel = new PreprocessingPanel(new SwingWorker<>() {
+            private final int POWER = 1_000_000_000;
+            private final int MOD = 1_000_000_007;
+
+            @Override
+            protected Void doInBackground() {
+                System.out.println("started background");
+                int result = 1;
+                setProgress(0);
+                for (int progress = 0; progress <= POWER; progress++) {
+                    result = (result * 2) % MOD; // Never mind, java overflow is goofy like that
+                    int percent = POWER / 100;
+                    if ((progress % percent) == 0) {
+                        setProgress(progress / percent);
+                    }
+                }
+                System.out.println(result);
+                return null;
+            }
+        });
         new MouseFollowAndResizeFrame(
                 panel,
                 new Dimension(

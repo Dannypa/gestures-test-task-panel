@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -8,21 +7,11 @@ import java.beans.PropertyChangeListener;
  * Displays a progress bar during computation, and shows the result after completion.
  * This class uses SwingWorker as it works robustly with JProgressBar.
  */
-public class PreprocessingBackend implements PropertyChangeListener {
-    /**
-     * Modulo value for computations to prevent overflow.
-     */
-    private final int MOD = 1_000_000_007;
-
-    /**
-     * The result of the preprocessing task.
-     */
-    private int result;
-
+public class PreprocessingManager implements PropertyChangeListener {
     /**
      * Background task that performs the computation.
      */
-    private Task task;
+    private final SwingWorker<Void, Void> task;
 
     /**
      * Progress bar that shows computation progress.
@@ -45,51 +34,21 @@ public class PreprocessingBackend implements PropertyChangeListener {
     private final JLabel resultLabel;
 
     /**
-     * Property change handler to react to updating progress of the background task.
-     *
+     * Property change handler to react to updating progress of the background task and
+     * perform the final operation after the task is done.
      * @param propertyChangeEvent The event containing the property change.
      */
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if (propertyChangeEvent.getPropertyName().equals("progress")) {
             progressBar.setValue(task.getProgress());
-        }
-    }
-
-    /**
-     * Background task that performs a computation (e.g., a power of 2 operation).
-     * It periodically updates progress as a percentage.
-     */
-    class Task extends SwingWorker<Void, Void> {
-        private final int POWER = 1_000_000_000;
-
-        /**
-         * Main task. Executed in background thread.
-         */
-        @Override
-        public Void doInBackground() {
-            System.out.println("started background");
-            result = 1;
-            setProgress(0);
-            for (int progress = 0; progress <= POWER; progress++) {
-                result = (result * 2) % MOD; // Never mind, java overflow is goofy like that
-                int percent = POWER / 100;
-                if ((progress % percent) == 0) {
-                    setProgress(progress / percent);
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Executed when the background computation finishes in event dispatching thread.
-         * Updates the UI to display the result and hide the progress bar.
-         */
-        @Override
-        public void done() {
+        } else if (propertyChangeEvent.getPropertyName().equals("state")
+                && propertyChangeEvent.getNewValue() == SwingWorker.StateValue.DONE) {
             disableProgressBarPanel.run();
 
-            resultLabel.setText("Loaded! " + result); // is it ugly? probably not
+            resultLabel.setText("Loaded!");
+            // the proper way would be to make the class generic and then have `private T result` and use it here
+            // but i am just doing proof of concept here.
             setUpResultPanel.run();
         }
     }
@@ -99,7 +58,6 @@ public class PreprocessingBackend implements PropertyChangeListener {
      * NB!!! all the fields should be defined before calling this method!!!
      */
     public void startPreprocessing() {
-        task = new Task();
         task.addPropertyChangeListener(this);
         task.execute();
     }
@@ -114,7 +72,15 @@ public class PreprocessingBackend implements PropertyChangeListener {
      * @param resultLabel             The label to display the final result.
      * @param showResultPanel         Runnable that configures the result panel and makes it visible
      */
-    PreprocessingBackend(JProgressBar progressBar, Runnable showProgressBarPanel, Runnable disableProgressBarPanel, JLabel resultLabel, Runnable showResultPanel) {
+    PreprocessingManager(
+            JProgressBar progressBar,
+            Runnable showProgressBarPanel,
+            Runnable disableProgressBarPanel,
+            JLabel resultLabel,
+            Runnable showResultPanel,
+            SwingWorker<Void, Void> task
+    ) {
+        this.task = task;
         this.progressBar = progressBar;
         this.resultLabel = resultLabel;
         this.setUpResultPanel = showResultPanel;
